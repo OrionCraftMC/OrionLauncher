@@ -1,6 +1,7 @@
 package io.github.orioncraftmc.launcher.mixin;
 
 import io.github.orioncraftmc.launcher.OrionLauncher;
+import io.github.orioncraftmc.launcher.mixin.obfuscation.DeobfuscatingReferenceRemapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -10,8 +11,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.launch.platform.container.ContainerHandleURI;
 import org.spongepowered.asm.launch.platform.container.IContainerHandle;
-import org.spongepowered.asm.logging.ILogger;
-import org.spongepowered.asm.logging.LoggerAdapterJava;
+import org.spongepowered.asm.logging.*;
 import org.spongepowered.asm.mixin.transformer.IMixinTransformer;
 import org.spongepowered.asm.mixin.transformer.IMixinTransformerFactory;
 import org.spongepowered.asm.service.*;
@@ -49,6 +49,9 @@ public class OrionLauncherMixinService extends MixinServiceAbstract implements I
 
     @Override
     public Class<?> findClass(String name, boolean initialize) throws ClassNotFoundException {
+        if (name.endsWith(DeobfuscatingReferenceRemapper.class.getSimpleName())) {
+            return DeobfuscatingReferenceRemapper.class;
+        }
         return OrionLauncher.getInstance().loader().findClass(name, initialize);
     }
 
@@ -126,7 +129,7 @@ public class OrionLauncherMixinService extends MixinServiceAbstract implements I
 
     @Override
     protected ILogger createLogger(String name) {
-        return new LoggerAdapterJava(name);
+        return new LoggerAdapterConsole(name);
     }
 
     @Override
