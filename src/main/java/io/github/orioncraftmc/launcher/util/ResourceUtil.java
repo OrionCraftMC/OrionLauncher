@@ -42,7 +42,7 @@ public class ResourceUtil {
                     if (fileSystem != FileSystems.getDefault()) fileSystem.close();
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                // Ignore
             }
 
         }
