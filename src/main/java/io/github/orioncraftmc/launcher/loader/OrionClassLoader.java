@@ -3,12 +3,14 @@ package io.github.orioncraftmc.launcher.loader;
 import com.google.common.collect.Lists;
 import io.github.orioncraftmc.launcher.OrionLauncher;
 import io.github.orioncraftmc.launcher.transformers.OrionClassTransformer;
-import io.github.orioncraftmc.launcher.transformers.impl.MixinClassTransformer;
+import io.github.orioncraftmc.launcher.transformers.impl.exposer.AccessExposerTransformer;
+import io.github.orioncraftmc.launcher.transformers.impl.mixin.MixinClassTransformer;
 import java.io.InputStream;
 import java.util.*;
 
 public class OrionClassLoader extends ClassLoader {
     private final List<OrionClassTransformer> transformers = List.of(
+            new AccessExposerTransformer(),
             new MixinClassTransformer()
     );
 

@@ -1,4 +1,4 @@
-package io.github.orioncraftmc.launcher.mixin;
+package io.github.orioncraftmc.launcher.transformers.impl.mixin;
 
 import io.github.orioncraftmc.launcher.util.ResourceUtil;
 import org.spongepowered.asm.launch.platform.MixinPlatformAgentAbstract;

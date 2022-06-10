@@ -1,4 +1,4 @@
-package io.github.orioncraftmc.launcher.mixin;
+package io.github.orioncraftmc.launcher.transformers.impl.mixin;
 
 import java.util.HashMap;
 import java.util.Map;

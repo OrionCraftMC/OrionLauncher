@@ -1,4 +1,4 @@
-package io.github.orioncraftmc.launcher.mixin;
+package io.github.orioncraftmc.launcher.transformers.impl.mixin;
 
 import io.github.orioncraftmc.launcher.OrionLauncher;
 import io.github.orioncraftmc.launcher.util.UrlUtil;
