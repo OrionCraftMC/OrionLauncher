@@ -16,7 +16,10 @@ public class ResourceUtil {
         String[] classPath = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
 
         for (String classLoc : classPath) {
-            Path uri = new File(classLoc).toPath();
+            File file = new File(classLoc);
+            if (!file.exists()) continue;
+
+            Path uri = file.toPath();
 
             try {
                 FileSystem fileSystem = Files.isDirectory(uri) ? FileSystems.getDefault() : FileSystems.newFileSystem(
