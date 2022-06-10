@@ -1,13 +1,9 @@
 package io.github.orioncraftmc.launcher.loader;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import io.github.orioncraftmc.launcher.OrionLauncher;
-import io.github.orioncraftmc.launcher.mixin.obfuscation.DeobfuscatingReferenceRemapper;
 import io.github.orioncraftmc.launcher.transformers.OrionClassTransformer;
 import io.github.orioncraftmc.launcher.transformers.impl.MixinClassTransformer;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 
@@ -62,28 +58,6 @@ public class OrionClassLoader extends ClassLoader {
         }
 
         return finalBytes;
-    }
-
-    @Override
-    public InputStream getResourceAsStream(String name) {
-        InputStream resource = super.getResourceAsStream(name);
-        if (OrionLauncher.getInstance().deobfMappingTree() != null && resource != null && name.endsWith(".json")) {
-            System.out.println("Found mixin resource " + name);
-            try {
-                byte[] bytes = resource.readAllBytes();
-                resource.close();
-
-                JsonObject json = new Gson().fromJson(new String(bytes), JsonObject.class);
-
-                json.addProperty("refmapWrapper", DeobfuscatingReferenceRemapper.class.getSimpleName());
-
-                return new ByteArrayInputStream(json.toString().getBytes(StandardCharsets.UTF_8));
-            } catch (IOException e) {
-                new RuntimeException("Unable to inject deobfuscation remapper", e).printStackTrace();
-            }
-        }
-
-        return resource;
     }
 
     private boolean isClassExcludedFromTransform(String name) {
