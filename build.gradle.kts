@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     implementation("info.picocli:picocli:4.6.3")
-    implementation("net.fabricmc:sponge-mixin:0.11.4+mixin.0.8.5")
+    implementation("io.github.orioncraftmc:Mixin")
     implementation("net.fabricmc:mapping-io:0.3.0")
 
     runtimeOnly(":original-obf")
