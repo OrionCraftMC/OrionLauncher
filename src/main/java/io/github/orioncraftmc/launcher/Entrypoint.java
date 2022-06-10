@@ -33,7 +33,9 @@ public class Entrypoint implements Callable<Integer> {
 
             OrionLauncher.getInstance().init(Entrypoint.class.getClassLoader(), mainClass, params);
         } catch (Throwable e) {
-            throw new RuntimeException(e);
+            RuntimeException ex = new RuntimeException(e);
+            ex.printStackTrace();
+            throw ex;
         }
 
         return 0;
@@ -50,7 +52,6 @@ public class Entrypoint implements Callable<Integer> {
     public static void main(String[] args) {
         CommandLine commandLine = new CommandLine(new Entrypoint());
         commandLine.setCaseInsensitiveEnumValuesAllowed(true);
-        int exitCode = commandLine.execute(args);
-        System.exit(exitCode);
+        commandLine.execute(args);
     }
 }
