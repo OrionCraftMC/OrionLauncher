@@ -33,8 +33,9 @@ public class OrionLauncher {
         return instance;
     }
 
-    public void init(ClassLoader parentLoader, String mainClassName, List<String> params) throws Throwable {
+    public void init(ClassLoader parentLoader, String mainClassName, List<String> params, List<String> excludedPackages) throws Throwable {
         loader = new OrionClassLoader(parentLoader);
+        loader.addExcludedPackages(excludedPackages);
         loader.init();
 
         Class<?> mainClass = loader.loadClass(mainClassName);

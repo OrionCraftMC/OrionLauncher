@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.util.Constants;
 import picocli.CommandLine;
 
+@SuppressWarnings("FieldMayBeFinal")
 @CommandLine.Command()
 public class Entrypoint implements Callable<Integer> {
 
@@ -19,19 +20,20 @@ public class Entrypoint implements Callable<Integer> {
     @CommandLine.Option(names = {"-m", "--mappings"})
     private Path obfMapping;
 
+    @CommandLine.Option(names = "--excluded-packages")
+    private List<String> excludedPackages = List.of();
+
     @CommandLine.Parameters(split = " ")
-    private List<String> params;
+    private List<String> params = List.of();
 
     @Override
     public Integer call() {
-
         OrionLauncher.getInstance().setMixinSide(getMixinSideAsConstant(side));
-
 
         try {
             if (obfMapping != null) OrionLauncher.getInstance().initDeobfMappings(obfMapping);
 
-            OrionLauncher.getInstance().init(Entrypoint.class.getClassLoader(), mainClass, params);
+            OrionLauncher.getInstance().init(Entrypoint.class.getClassLoader(), mainClass, params, excludedPackages);
         } catch (Throwable e) {
             RuntimeException ex = new RuntimeException(e);
             ex.printStackTrace();
