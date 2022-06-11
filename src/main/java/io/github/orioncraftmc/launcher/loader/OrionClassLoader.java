@@ -15,6 +15,10 @@ public class OrionClassLoader extends ClassLoader {
             new MixinClassTransformer()
     );
 
+    public List<OrionClassTransformer> transformers() {
+        return transformers;
+    }
+
     private final ArrayList<String> excludedPackages = Lists.newArrayList(
             "java.",
             "jdk.",
