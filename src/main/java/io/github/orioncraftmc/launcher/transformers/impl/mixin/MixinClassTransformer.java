@@ -2,6 +2,7 @@ package io.github.orioncraftmc.launcher.transformers.impl.mixin;
 
 import io.github.orioncraftmc.launcher.transformers.OrionClassTransformer;
 import java.lang.reflect.Method;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
@@ -24,10 +25,10 @@ public class MixinClassTransformer implements OrionClassTransformer {
     }
 
     @Override
-    public byte[] transformClass(String className, byte[] classBytes) {
+    public byte[] transformClass(String className, byte @Nullable [] classBytes) {
         if (OrionLauncherMixinService.getTransformer() == null) return classBytes;
 
         return OrionLauncherMixinService.getTransformer()
-                .transformClass(MixinEnvironment.getCurrentEnvironment(), className, classBytes);
+                .transformClassBytes(className, className, classBytes);
     }
 }

@@ -7,6 +7,7 @@ import io.github.orioncraftmc.launcher.transformers.impl.exposer.AccessExposerTr
 import io.github.orioncraftmc.launcher.transformers.impl.mixin.MixinClassTransformer;
 import java.io.InputStream;
 import java.util.*;
+import org.jetbrains.annotations.Nullable;
 
 public class OrionClassLoader extends ClassLoader {
     private final List<OrionClassTransformer> transformers = List.of(
@@ -48,12 +49,12 @@ public class OrionClassLoader extends ClassLoader {
         }
     }
 
-    public byte[] getUnmodifiedClassBytes(String name) throws ClassNotFoundException {
+    public byte @Nullable [] getUnmodifiedClassBytes(String name) {
         try (InputStream resourceAsStream = OrionLauncher.getInstance().loader()
                 .getResourceAsStream(name.replace('.', '/') + ".class")) {
             return Objects.requireNonNull(resourceAsStream).readAllBytes();
         } catch (Exception e) {
-            throw new ClassNotFoundException(name, e);
+            return null;
         }
     }
 
@@ -63,11 +64,14 @@ public class OrionClassLoader extends ClassLoader {
             return super.loadClass(name);
         }
 
-        byte[] bytes = transformClass(name, getUnmodifiedClassBytes(name));
+        byte[] classBytes = getUnmodifiedClassBytes(name);
+        byte[] bytes = transformClass(name, classBytes);
+
+        if (bytes == null) throw new ClassNotFoundException(name);
         return defineClass(name, bytes, 0, bytes.length);
     }
 
-    private byte[] transformClass(String name, byte[] original) {
+    private byte[] transformClass(String name, byte @Nullable [] original) {
         byte[] finalBytes = original;
         for (OrionClassTransformer transformer : transformers) {
             finalBytes = transformer.transformClass(name, finalBytes);
