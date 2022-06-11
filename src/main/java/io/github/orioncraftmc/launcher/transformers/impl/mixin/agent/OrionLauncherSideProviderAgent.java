@@ -1,4 +1,4 @@
-package io.github.orioncraftmc.launcher.transformers.impl.mixin;
+package io.github.orioncraftmc.launcher.transformers.impl.mixin.agent;
 
 import io.github.orioncraftmc.launcher.OrionLauncher;
 import java.util.Collection;

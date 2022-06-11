@@ -1,6 +1,8 @@
-package io.github.orioncraftmc.launcher.transformers.impl.mixin;
+package io.github.orioncraftmc.launcher.transformers.impl.mixin.service;
 
 import io.github.orioncraftmc.launcher.OrionLauncher;
+import io.github.orioncraftmc.launcher.transformers.impl.mixin.agent.OrionLauncherPlatformAgent;
+import io.github.orioncraftmc.launcher.transformers.impl.mixin.agent.OrionLauncherSideProviderAgent;
 import io.github.orioncraftmc.launcher.util.UrlUtil;
 import java.io.IOException;
 import java.io.InputStream;

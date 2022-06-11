@@ -1,1 +1,1 @@
-io.github.orioncraftmc.launcher.transformers.impl.mixin.OrionLauncherGlobalPropertyService
+io.github.orioncraftmc.launcher.transformers.impl.mixin.service.OrionLauncherGlobalPropertyService

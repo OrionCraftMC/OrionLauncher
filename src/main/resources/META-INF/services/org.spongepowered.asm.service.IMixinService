@@ -1,1 +1,1 @@
-io.github.orioncraftmc.launcher.transformers.impl.mixin.OrionLauncherMixinService
+io.github.orioncraftmc.launcher.transformers.impl.mixin.service.OrionLauncherMixinService

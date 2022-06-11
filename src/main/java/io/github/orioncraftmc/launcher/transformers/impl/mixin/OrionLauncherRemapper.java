@@ -6,13 +6,15 @@ import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import org.spongepowered.asm.mixin.extensibility.IRemapper;
 import org.spongepowered.asm.util.ObfuscationUtil;
 
+@SuppressWarnings("DuplicatedCode")
 public class OrionLauncherRemapper implements IRemapper, ObfuscationUtil.IClassRemapper {
     @Override
     public String mapMethodName(String owner, String name, String desc) {
         MemoryMappingTree tree = OrionLauncher.getInstance().deobfMappingTree();
         if (tree == null) return name;
 
-        MappingTree.ClassMapping classEntry = tree.getClass(owner);
+        int maxNamespaceId = tree.getMaxNamespaceId() - 1;
+        MappingTree.ClassMapping classEntry = tree.getClass(owner, maxNamespaceId);
         if (classEntry == null) return name;
 
         MappingTree.MethodMapping method = classEntry.getMethod(name, desc, tree.getMaxNamespaceId() - 1);
@@ -26,7 +28,8 @@ public class OrionLauncherRemapper implements IRemapper, ObfuscationUtil.IClassR
         MemoryMappingTree tree = OrionLauncher.getInstance().deobfMappingTree();
         if (tree == null) return name;
 
-        MappingTree.ClassMapping classEntry = tree.getClass(owner);
+        int maxNamespaceId = tree.getMaxNamespaceId() - 1;
+        MappingTree.ClassMapping classEntry = tree.getClass(owner, maxNamespaceId);
         if (classEntry == null) return name;
 
         MappingTree.FieldMapping field = classEntry.getField(name, desc, tree.getMaxNamespaceId() - 1);
@@ -37,13 +40,18 @@ public class OrionLauncherRemapper implements IRemapper, ObfuscationUtil.IClassR
 
     @Override
     public String map(String typeName) {
+        boolean isDot = typeName.contains(".");
+        typeName = typeName.replace(".", "/");
+        String dotTypeName = isDot ? typeName.replace("/", ".") : typeName;
+
         MemoryMappingTree tree = OrionLauncher.getInstance().deobfMappingTree();
-        if (tree == null) return typeName;
+        if (tree == null) return dotTypeName;
 
-        MappingTree.ClassMapping classEntry = tree.getClass(typeName);
-        if (classEntry == null) return typeName;
+        int maxNamespaceId = tree.getMaxNamespaceId() - 1;
+        MappingTree.ClassMapping classEntry = tree.getClass(typeName, maxNamespaceId);
+        if (classEntry == null) return dotTypeName;
 
-        return classEntry.getSrcName();
+        return isDot ? classEntry.getSrcName().replace("/", ".") : classEntry.getSrcName();
     }
 
     @Override
@@ -52,12 +60,11 @@ public class OrionLauncherRemapper implements IRemapper, ObfuscationUtil.IClassR
 
         if (tree == null) return typeName;
 
-        int maxNamespaceId = tree.getMaxNamespaceId() - 1;
-        MappingTree.ClassMapping classEntry = tree.getClass(typeName, maxNamespaceId);
+        MappingTree.ClassMapping classEntry = tree.getClass(typeName);
 
         if (classEntry == null) return typeName;
 
-        return classEntry.getName(maxNamespaceId);
+        return classEntry.getName(tree.getNamespaceId(tree.getSrcNamespace()));
     }
 
     @Override

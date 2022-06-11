@@ -1,5 +1,6 @@
-package io.github.orioncraftmc.launcher.transformers.impl.mixin;
+package io.github.orioncraftmc.launcher.transformers.impl.mixin.agent;
 
+import io.github.orioncraftmc.launcher.transformers.impl.mixin.OrionLauncherRemapper;
 import io.github.orioncraftmc.launcher.util.ResourceUtil;
 import org.spongepowered.asm.launch.platform.MixinPlatformAgentAbstract;
 import org.spongepowered.asm.mixin.MixinEnvironment;

@@ -1,6 +1,7 @@
 package io.github.orioncraftmc.launcher.transformers.impl.mixin;
 
 import io.github.orioncraftmc.launcher.transformers.OrionClassTransformer;
+import io.github.orioncraftmc.launcher.transformers.impl.mixin.service.OrionLauncherMixinService;
 import java.lang.reflect.Method;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.launch.MixinBootstrap;
