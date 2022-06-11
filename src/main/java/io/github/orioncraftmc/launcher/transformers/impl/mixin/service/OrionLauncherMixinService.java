@@ -1,6 +1,8 @@
 package io.github.orioncraftmc.launcher.transformers.impl.mixin.service;
 
 import io.github.orioncraftmc.launcher.OrionLauncher;
+import io.github.orioncraftmc.launcher.transformers.OrionClassTransformer;
+import io.github.orioncraftmc.launcher.transformers.impl.mixin.MixinClassTransformer;
 import io.github.orioncraftmc.launcher.transformers.impl.mixin.agent.OrionLauncherPlatformAgent;
 import io.github.orioncraftmc.launcher.transformers.impl.mixin.agent.OrionLauncherSideProviderAgent;
 import io.github.orioncraftmc.launcher.util.UrlUtil;
@@ -33,7 +35,19 @@ public class OrionLauncherMixinService extends MixinServiceAbstract implements I
 
     @Override
     public ClassNode getClassNode(String name, boolean runTransformers) throws ClassNotFoundException, IOException {
-        ClassReader reader = new ClassReader(OrionLauncher.getInstance().loader().getUnmodifiedClassBytes(name));
+        byte[] bytes = OrionLauncher.getInstance().loader().getUnmodifiedClassBytes(name);
+        for (OrionClassTransformer transformer : OrionLauncher.getInstance().loader().transformers()) {
+            if (transformer instanceof MixinClassTransformer) {
+                continue;
+            }
+            bytes = transformer.transformClass(name, bytes);
+        }
+
+        if (bytes == null) {
+            throw new ClassNotFoundException(name);
+        }
+
+        ClassReader reader = new ClassReader(bytes);
         ClassNode node = new ClassNode();
         reader.accept(node, 0);
         return node;
