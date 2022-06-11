@@ -1,11 +1,11 @@
 plugins {
-    java
+    `java-library`
     `maven-publish`
 }
 
 group = "io.github.orioncraftmc"
 base { archivesName.set("orion-launcher") }
-version = "0.0.6-SNAPSHOT"
+version = "0.0.7-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     implementation("info.picocli:picocli:4.6.3")
-    implementation("io.github.orioncraftmc:sponge-mixin:0.0.1+mixin.0.8.5")
+    api("net.fabricmc:sponge-mixin:0.11.4+mixin.0.8.5")
     implementation("net.fabricmc:mapping-io:0.3.0")
     implementation("org.jetbrains:annotations:23.0.0")
 }
