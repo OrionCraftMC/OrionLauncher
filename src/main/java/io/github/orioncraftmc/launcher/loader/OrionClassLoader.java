@@ -5,13 +5,16 @@ import io.github.orioncraftmc.launcher.OrionLauncher;
 import io.github.orioncraftmc.launcher.transformers.OrionClassTransformer;
 import io.github.orioncraftmc.launcher.transformers.impl.exposer.AccessExposerTransformer;
 import io.github.orioncraftmc.launcher.transformers.impl.mixin.MixinClassTransformer;
+import io.github.orioncraftmc.launcher.transformers.impl.remapper.RemapperTransformer;
 import java.io.InputStream;
 import java.util.*;
+import net.fabricmc.mappingio.tree.MemoryMappingTree;
 import org.jetbrains.annotations.Nullable;
 
 public class OrionClassLoader extends ClassLoader {
     private final List<OrionClassTransformer> transformers = List.of(
             new AccessExposerTransformer(),
+            new RemapperTransformer(),
             new MixinClassTransformer()
     );
 
@@ -54,8 +57,18 @@ public class OrionClassLoader extends ClassLoader {
     }
 
     public byte @Nullable [] getUnmodifiedClassBytes(String name) {
+        String finalName = name.replace('.', '/');
+
+        MemoryMappingTree deobfTree = OrionLauncher.getInstance().deobfMappingTree();
+        if (deobfTree != null) {
+            String obfName = deobfTree.mapClassName(finalName, deobfTree.getMaxNamespaceId() - 1, deobfTree.getMinNamespaceId());
+            if (obfName != null) {
+                finalName = obfName;
+            }
+        }
+
         try (InputStream resourceAsStream = OrionLauncher.getInstance().loader()
-                .getResourceAsStream(name.replace('.', '/') + ".class")) {
+                .getResourceAsStream(finalName + ".class")) {
             return Objects.requireNonNull(resourceAsStream).readAllBytes();
         } catch (Exception e) {
             return null;
