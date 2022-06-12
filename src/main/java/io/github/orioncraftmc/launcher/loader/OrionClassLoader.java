@@ -98,6 +98,10 @@ public class OrionClassLoader extends SecureClassLoader {
             return super.loadClass(name);
         }
 
+        // Check if we have loaded the class already, if so, return it directly
+        Class<?> loadedClass = findLoadedClass(name);
+        if (loadedClass != null) return loadedClass;
+
         byte[] classBytes = getUnmodifiedClassBytes(name);
         name = remapClassName(name, false);
 

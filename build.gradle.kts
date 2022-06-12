@@ -5,7 +5,7 @@ plugins {
 
 group = "io.github.orioncraftmc"
 base { archivesName.set("orion-launcher") }
-version = "0.0.9-SNAPSHOT"
+version = "0.0.10-SNAPSHOT"
 
 repositories {
     mavenCentral()
