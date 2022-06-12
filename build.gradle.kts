@@ -5,7 +5,7 @@ plugins {
 
 group = "io.github.orioncraftmc"
 base { archivesName.set("orion-launcher") }
-version = "0.0.7-SNAPSHOT"
+version = "0.0.8-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -18,6 +18,7 @@ dependencies {
     api("net.fabricmc:sponge-mixin:0.11.4+mixin.0.8.5")
     implementation("net.fabricmc:mapping-io:0.3.0")
     implementation("org.jetbrains:annotations:23.0.0")
+    implementation("net.fabricmc:tiny-remapper:0.8.4")
 }
 
 publishing {

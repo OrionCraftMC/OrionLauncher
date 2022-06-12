@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class OrionClassLoader extends ClassLoader {
     private final List<OrionClassTransformer> transformers = List.of(
-            new AccessExposerTransformer(),
             new RemapperTransformer(),
+            new AccessExposerTransformer(),
             new MixinClassTransformer()
     );
 
@@ -59,13 +59,7 @@ public class OrionClassLoader extends ClassLoader {
     public byte @Nullable [] getUnmodifiedClassBytes(String name) {
         String finalName = name.replace('.', '/');
 
-        MemoryMappingTree deobfTree = OrionLauncher.getInstance().deobfMappingTree();
-        if (deobfTree != null) {
-            String obfName = deobfTree.mapClassName(finalName, deobfTree.getMaxNamespaceId() - 1, deobfTree.getMinNamespaceId());
-            if (obfName != null) {
-                finalName = obfName;
-            }
-        }
+        finalName = remapClassName(finalName, true);
 
         try (InputStream resourceAsStream = OrionLauncher.getInstance().loader()
                 .getResourceAsStream(finalName + ".class")) {
@@ -75,6 +69,19 @@ public class OrionClassLoader extends ClassLoader {
         }
     }
 
+    private static String remapClassName(String finalName, boolean getObfuscatedName) {
+        MemoryMappingTree deobfTree = OrionLauncher.getInstance().deobfMappingTree();
+        if (deobfTree == null) return finalName;
+
+        int namedNs = deobfTree.getMaxNamespaceId() - 1;
+        int srcNs = deobfTree.getMinNamespaceId();
+        String obfName = deobfTree.mapClassName(finalName, getObfuscatedName ? namedNs : srcNs, getObfuscatedName ? srcNs : namedNs);
+        if (obfName != null) {
+            finalName = obfName;
+        }
+        return finalName;
+    }
+
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
         if (isClassExcludedFromTransform(name)) {
@@ -82,6 +89,8 @@ public class OrionClassLoader extends ClassLoader {
         }
 
         byte[] classBytes = getUnmodifiedClassBytes(name);
+        name = remapClassName(name, false);
+
         byte[] bytes = transformClass(name, classBytes);
 
         if (bytes == null) throw new ClassNotFoundException(name);
