@@ -5,18 +5,19 @@ plugins {
 
 group = "io.github.orioncraftmc"
 base { archivesName.set("orion-launcher") }
-version = "0.0.8-SNAPSHOT"
+version = "0.0.9-SNAPSHOT"
 
 repositories {
     mavenCentral()
     maven("https://maven.fabricmc.net/")
     maven("https://raw.githubusercontent.com/OrionCraftMC/OrionMaven/main/")
+    maven("https://jitpack.io")
 }
 
 dependencies {
     implementation("info.picocli:picocli:4.6.3")
     api("net.fabricmc:sponge-mixin:0.11.4+mixin.0.8.5")
-    implementation("net.fabricmc:mapping-io:0.3.0")
+    implementation("com.github.FabricMc:mapping-io:597f0722d6")
     implementation("org.jetbrains:annotations:23.0.0")
     implementation("net.fabricmc:tiny-remapper:0.8.4")
 }

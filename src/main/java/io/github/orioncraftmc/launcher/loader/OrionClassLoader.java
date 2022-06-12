@@ -7,11 +7,16 @@ import io.github.orioncraftmc.launcher.transformers.impl.exposer.AccessExposerTr
 import io.github.orioncraftmc.launcher.transformers.impl.mixin.MixinClassTransformer;
 import io.github.orioncraftmc.launcher.transformers.impl.remapper.RemapperTransformer;
 import java.io.InputStream;
+import java.net.URL;
+import java.security.CodeSource;
+import java.security.SecureClassLoader;
+import java.security.cert.Certificate;
 import java.util.*;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class OrionClassLoader extends ClassLoader {
+public class OrionClassLoader extends SecureClassLoader {
     private final List<OrionClassTransformer> transformers = List.of(
             new RemapperTransformer(),
             new AccessExposerTransformer(),
@@ -57,16 +62,20 @@ public class OrionClassLoader extends ClassLoader {
     }
 
     public byte @Nullable [] getUnmodifiedClassBytes(String name) {
-        String finalName = name.replace('.', '/');
-
-        finalName = remapClassName(finalName, true);
-
         try (InputStream resourceAsStream = OrionLauncher.getInstance().loader()
-                .getResourceAsStream(finalName + ".class")) {
+                .getResourceAsStream(getClassFileName(name))) {
             return Objects.requireNonNull(resourceAsStream).readAllBytes();
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @NotNull
+    private static String getClassFileName(String name) {
+        String finalName = name.replace('.', '/');
+        finalName = remapClassName(finalName, true);
+
+        return finalName + ".class";
     }
 
     private static String remapClassName(String finalName, boolean getObfuscatedName) {
@@ -75,7 +84,8 @@ public class OrionClassLoader extends ClassLoader {
 
         int namedNs = deobfTree.getMaxNamespaceId() - 1;
         int srcNs = deobfTree.getMinNamespaceId();
-        String obfName = deobfTree.mapClassName(finalName, getObfuscatedName ? namedNs : srcNs, getObfuscatedName ? srcNs : namedNs);
+        String obfName = deobfTree.mapClassName(finalName, getObfuscatedName ? namedNs : srcNs,
+                getObfuscatedName ? srcNs : namedNs);
         if (obfName != null) {
             finalName = obfName;
         }
@@ -94,7 +104,11 @@ public class OrionClassLoader extends ClassLoader {
         byte[] bytes = transformClass(name, classBytes);
 
         if (bytes == null) throw new ClassNotFoundException(name);
-        return defineClass(name, bytes, 0, bytes.length);
+
+        URL url = OrionLauncher.getInstance().loader().getResource(getClassFileName(name));
+        CodeSource cs = new CodeSource(url, (Certificate[]) null);
+
+        return defineClass(name, bytes, 0, bytes.length, cs);
     }
 
     private byte[] transformClass(String name, byte @Nullable [] original) {
